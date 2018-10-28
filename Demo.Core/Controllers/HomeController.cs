@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Demo.Core.Models;
 
@@ -29,17 +28,31 @@ namespace Demo.Core.Controllers
         public IActionResult Products()
         {
             ViewData["Message"] = "Your products page.";
-
+            ViewBag.Message = string.Empty;
             return View();
         }
 
         [HttpPost]
         public IActionResult Products(string productName, 
-            string productNumber, 
-            string productCost, 
+            int productNumber, 
+            decimal productCost, 
             string productDescription)
         {
-            ViewData["Message"] = "Your products page.";
+            using (var context = new DemoDbContext())
+            {
+                var product = new Products
+                {
+                    Cost = productCost,
+                    Description = productDescription,
+                    Name = productName,
+                    Number = productNumber
+                };
+
+                context.Products.Add(product);
+                context.SaveChanges();
+            }
+
+            ViewBag.Message = "Successfully added product info to the database";
             return View();
         }
 
