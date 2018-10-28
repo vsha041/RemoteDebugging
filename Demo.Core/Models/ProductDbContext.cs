@@ -4,18 +4,17 @@ using Microsoft.Extensions.Configuration;
 
 namespace Demo.Core.Models
 {
-    public partial class DemoDbContext : DbContext
+    public partial class ProductDbContext : DbContext
     {
-        public DemoDbContext()
+        public ProductDbContext()
         {
         }
 
-        public DemoDbContext(DbContextOptions<DemoDbContext> options)
+        public ProductDbContext(DbContextOptions<ProductDbContext> options)
             : base(options)
         {
         }
-        
-        public virtual DbSet<MigrationHistory> MigrationHistory { get; set; }
+
         public virtual DbSet<Products> Products { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -35,23 +34,6 @@ namespace Demo.Core.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<MigrationHistory>(entity =>
-            {
-                entity.HasKey(e => new { e.MigrationId, e.ContextKey });
-
-                entity.ToTable("__MigrationHistory");
-
-                entity.Property(e => e.MigrationId).HasMaxLength(150);
-
-                entity.Property(e => e.ContextKey).HasMaxLength(300);
-
-                entity.Property(e => e.Model).IsRequired();
-
-                entity.Property(e => e.ProductVersion)
-                    .IsRequired()
-                    .HasMaxLength(32);
-            });
-
             modelBuilder.Entity<Products>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
